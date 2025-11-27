@@ -181,19 +181,23 @@
 
         {% if product.quantity > 0 %}
             {% if not is_seller %}
-                <div class="quantity-selector">
-                    <label for="quantity">Quantidade:</label>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}">
-                </div>
+                <form method="post" action="{% url 'add_to_cart' slug=product.slug %}" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <label for="quantity">Quantidade:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}" required>
+                    </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-primary">
-                        🛒 Adicionar ao Carrinho
-                    </button>
-                    <button class="btn btn-secondary">
-                        ♡ Adicionar à Lista
-                    </button>
-                </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            🛒 Adicionar ao Carrinho
+                        </button>
+                        <button type="button" class="btn btn-secondary">
+                            ♡ Adicionar à Lista
+                        </button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ request.path }}">
+                </form>
             {% else %}
                 <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; text-align: center; color: #1976d2;">
                     <p>📊 Você está visualizando este produto como <strong>Vendedor</strong>.</p>

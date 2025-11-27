@@ -20,8 +20,12 @@ def add_to_cart(request, slug):
 	pid = str(product.id)
 	cart[pid] = cart.get(pid, 0) + qty
 	_save_cart(request, cart)
-	messages.success(request, f'Produto "{product.name}" adicionado ao carrinho.')
-	return redirect(request.POST.get('next') or reverse('product_list'))
+	messages.success(request, f'✅ Produto "{product.name}" adicionado ao carrinho ({qty}x).')
+	# Redirecionar para a página de detalhes ou carrinho conforme POST 'next'
+	next_page = request.POST.get('next')
+	if next_page:
+		return redirect(next_page)
+	return redirect('cart_detail')
 
 
 def remove_from_cart(request, slug):

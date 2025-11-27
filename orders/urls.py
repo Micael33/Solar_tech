@@ -8,9 +8,3 @@ urlpatterns = [
     path('success/<int:order_id>/', views.order_success, name='order_success'),
     path('', views.order_list, name='order_list'),
 ]
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.order_list, name='order_list'),
-]

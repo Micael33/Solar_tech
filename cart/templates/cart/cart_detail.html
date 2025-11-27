@@ -1,2 +1,202 @@
-<h1>Cart (placeholder)</h1>
-<p>Your cart is empty.</p>
+{% extends "base/base.html" %}
+
+{% block title %}Carrinho - Solar Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .cart-header {
+        margin-bottom: 2rem;
+    }
+
+    .cart-header h1 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-table th {
+        background: #667eea;
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .cart-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .cart-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .product-name {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .quantity-input {
+        width: 80px;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .cart-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cart-summary {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: right;
+    }
+
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .summary-line:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #667eea;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-remove {
+        background: #d9534f;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: background 0.3s;
+    }
+
+    .btn-remove:hover {
+        background: #c9302c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <div class="cart-header">
+        <h1>🛒 Meu Carrinho</h1>
+        <p>Revise seus itens antes de finalizar a compra</p>
+    </div>
+
+    {% if items %}
+        <form method="post" action="{% url 'update_cart' %}">
+            {% csrf_token %}
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Preço Unit.</th>
+                        <th>Quantidade</th>
+                        <th>Subtotal</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for it in items %}
+                    <tr>
+                        <td class="product-name">
+                            <a href="{% url 'product_detail' slug=it.product.slug %}" style="color: #667eea; text-decoration: none;">
+                                {{ it.product.name }}
+                            </a>
+                        </td>
+                        <td>R$ {{ it.product.price|floatformat:2 }}</td>
+                        <td>
+                            <input type="number" class="quantity-input" name="qty_{{ it.product.id }}" value="{{ it.quantity }}" min="1">
+                        </td>
+                        <td style="color: #667eea; font-weight: bold;">
+                            R$ {{ it.subtotal|floatformat:2 }}
+                        </td>
+                        <td>
+                            <a href="{% url 'remove_from_cart' slug=it.product.slug %}" class="btn-remove">
+                                🗑️ Remover
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="cart-actions">
+                <div>
+                    <a href="{% url 'product_list' %}" class="btn btn-secondary">
+                        ← Continuar Comprando
+                    </a>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 0.5rem;">
+                        ↻ Atualizar Carrinho
+                    </button>
+                </div>
+                <div class="cart-summary">
+                    <div class="summary-line">
+                        <span>Total:</span>
+                        <span>R$ {{ total|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div style="text-align: right; margin-top: 1.5rem;">
+            <a href="{% url 'checkout' %}" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                💳 Finalizar Compra
+            </a>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🛒</div>
+            <h2>Seu carrinho está vazio</h2>
+            <p>Adicione produtos para começar suas compras</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                🛍️ Explorar Produtos
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

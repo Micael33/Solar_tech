@@ -1,2 +1,148 @@
-<h1>Orders (placeholder)</h1>
-<p>No orders yet.</p>
+{% extends "base/base.html" %}
+
+{% block title %}Meus Pedidos - Solar Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .orders-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .orders-header {
+        margin-bottom: 2rem;
+    }
+
+    .orders-header h1 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .order-id {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .order-total {
+        color: #667eea;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .order-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .order-items {
+        list-style: none;
+        padding: 0;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-name {
+        flex: 1;
+    }
+
+    .item-price {
+        text-align: right;
+        color: #667eea;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #999;
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+    <div class="orders-header">
+        <h1>📦 Meus Pedidos</h1>
+        <p>Histórico de compras e status dos seus pedidos</p>
+    </div>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="order-id">Pedido #{{ order.id }}</div>
+                    <div class="order-date">{{ order.created_at|date:"d 'de' M 'de' Y 'às' H:i" }}</div>
+                </div>
+                <div class="order-total">Total: R$ {{ order.total|floatformat:2 }}</div>
+            </div>
+
+            <h3 style="color: #333; margin-bottom: 1rem;">Itens</h3>
+            <ul class="order-items">
+                {% for item in order.items.all %}
+                <li class="order-item">
+                    <div class="item-name">
+                        <strong>{{ item.quantity }}x</strong> 
+                        {{ item.product.name if item.product else "(produto removido)" }}
+                    </div>
+                    <div class="item-price">
+                        R$ {{ item.price|floatformat:2 }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <div style="text-align: right; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid #f0f0f0;">
+                <strong style="color: #667eea; font-size: 1.1rem;">Subtotal: R$ {{ order.total|floatformat:2 }}</strong>
+                {% if order.paid %}
+                    <div style="margin-top: 0.5rem; color: #28a745; font-weight: bold;">✅ Pagamento Confirmado</div>
+                {% else %}
+                    <div style="margin-top: 0.5rem; color: #ffc107; font-weight: bold;">⏳ Aguardando Pagamento</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h2>Você ainda não tem pedidos</h2>
+            <p>Comece a comprar agora!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                🛍️ Explorar Produtos
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
