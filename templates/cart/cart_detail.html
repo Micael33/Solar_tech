@@ -1,0 +1,49 @@
+{% extends "base/base.html" %}
+
+{% block title %}Carrinho - Solar Store{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Meu Carrinho</h2>
+    {% if items %}
+    <form method="post" action="{% url 'update_cart' %}">
+        {% csrf_token %}
+        <table style="width:100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for it in items %}
+                <tr>
+                    <td>{{ it.product.name }}</td>
+                    <td>R$ {{ it.product.price|floatformat:2 }}</td>
+                    <td><input type="number" name="qty_{{ it.product.id }}" value="{{ it.quantity }}" min="0"></td>
+                    <td>R$ {{ it.subtotal|floatformat:2 }}</td>
+                    <td><a href="{% url 'remove_from_cart' slug=it.product.slug %}" class="btn btn-secondary">Remover</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <button type="submit" class="btn btn-primary">Atualizar Carrinho</button>
+            </div>
+            <div>
+                <strong>Total: R$ {{ total|floatformat:2 }}</strong>
+                <a href="{% url 'checkout' %}" class="btn btn-primary" style="margin-left:1rem;">Finalizar Compra</a>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <p>Seu carrinho está vazio.</p>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">Continuar Comprando</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}
+
+{% block title %}Pedido Confirmado - Solar Store{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Pedido Confirmado</h2>
+    <p>Obrigado! Seu pedido (ID: {{ order.id }}) foi realizado com sucesso.</p>
+    <p>Total: R$ {{ order.total|floatformat:2 }}</p>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">Continuar Comprando</a>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">Meus Pedidos</a>
+</div>
+{% endblock %}

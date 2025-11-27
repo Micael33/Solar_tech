@@ -1,0 +1,154 @@
+{% extends "base/base.html" %}
+
+{% block title %}Dashboard Vendedor - Solar Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin: 1rem 0;
+    }
+
+    .stat-card .stat-label {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .products-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .products-section h2 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 0.5rem;
+    }
+
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .product-table th {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #ddd;
+    }
+
+    .product-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .product-table tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Dashboard Vendedor</h1>
+    <p>Bem-vindo, {{ user.get_full_name|default:user.username }}!</p>
+</div>
+
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="stat-label">Produtos Ativos</div>
+        <div class="stat-value">{{ products_count }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Pedidos Recentes</div>
+        <div class="stat-value">0</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Vendas do Mês</div>
+        <div class="stat-value">R$ 0,00</div>
+    </div>
+</div>
+
+<div class="products-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">Meus Produtos</h2>
+        <a href="{% url 'product_create' %}" class="btn btn-primary btn-sm">+ Novo Produto</a>
+    </div>
+
+    {% if products %}
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>R$ {{ product.price|floatformat:2 }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.created_at|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="actions">
+                            <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary btn-sm">Ver</a>
+                            <a href="#" class="btn btn-secondary btn-sm">Editar</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; color: #999; padding: 2rem;">
+            Você ainda não tem produtos. <a href="{% url 'product_create' %}">Criar novo produto</a>
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

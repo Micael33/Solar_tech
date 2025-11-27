@@ -1,0 +1,312 @@
+{% extends "base/base.html" %}
+
+{% block title %}Solar Store - Energias Renováveis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 8px;
+        margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero .btn {
+        font-size: 1rem;
+        padding: 0.75rem 2rem;
+    }
+
+    .btn-white {
+        background-color: white;
+        color: #667eea;
+    }
+
+    .btn-white:hover {
+        background-color: #f0f0f0;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: #666;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 8px;
+        text-align: center;
+        margin: 3rem 0;
+    }
+
+    .cta-section h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .cta-section .btn {
+        font-size: 1rem;
+        padding: 0.75rem 2rem;
+    }
+
+    .products-preview {
+        margin: 3rem 0;
+    }
+
+    .products-preview h2 {
+        color: #333;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .products-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .product-preview-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .product-preview-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-preview-image {
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+    }
+
+    .product-preview-info {
+        padding: 1rem;
+    }
+
+    .product-preview-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-preview-price {
+        color: #667eea;
+        font-weight: bold;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+        text-align: center;
+    }
+
+    .stat-item h3 {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-item p {
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+        }
+
+        .hero .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <h1>☀️ Bem-vindo à Solar Store</h1>
+    <p>Sua plataforma de energia solar renováveis</p>
+    
+    {% if user.is_authenticated %}
+        <div class="hero-buttons">
+            {% if user.seller_profile %}
+                <a href="{% url 'seller_dashboard' %}" class="btn btn-white">
+                    📊 Ir para Dashboard
+                </a>
+            {% elif user.customer_profile %}
+                <a href="{% url 'customer_dashboard' %}" class="btn btn-white">
+                    🛍️ Ir para Dashboard
+                </a>
+            {% endif %}
+            <a href="{% url 'product_list' %}" class="btn btn-primary">
+                Explorar Produtos
+            </a>
+        </div>
+    {% else %}
+        <div class="hero-buttons">
+            <a href="{% url 'seller_register' %}" class="btn btn-white">
+                Sou Vendedor
+            </a>
+            <a href="{% url 'customer_register' %}" class="btn btn-primary">
+                Sou Cliente
+            </a>
+        </div>
+    {% endif %}
+</section>
+
+<!-- Features Section -->
+<section>
+    <h2 style="text-align: center; color: #333; margin: 2rem 0;">Por que escolher a Solar Store?</h2>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Segurança Garantida</h3>
+            <p>Transações seguras com os mais altos padrões de proteção de dados.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚚</div>
+            <h3>Entrega Rápida</h3>
+            <p>Produtos entregues em até 5 dias úteis.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Melhores Preços</h3>
+            <p>Compare preços e encontre as melhores oferta do mercado.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⭐</div>
+            <h3>Avaliações Reais</h3>
+            <p>Avaliações verificadas de clientes reais.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Products Preview -->
+{% if products %}
+<section class="products-preview">
+    <h2>Produtos em Destaque</h2>
+    <div class="products-preview-grid">
+        {% for product in products|slice:":4" %}
+        <div class="product-preview-card">
+            <div class="product-preview-image">☀️</div>
+            <div class="product-preview-info">
+                <div class="product-preview-name">{{ product.name|truncatewords:3 }}</div>
+                <div class="product-preview-price">R$ {{ product.price|floatformat:2 }}</div>
+                <a href="{% url 'product_detail' slug=product.slug %}" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem; margin-top: 0.5rem;">
+                    Ver
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'product_list' %}" class="btn btn-primary">
+            Ver Todos os Produtos
+        </a>
+    </div>
+</section>
+{% endif %}
+
+<!-- Stats Section -->
+<section class="stats">
+    <div class="stat-item">
+        <h3>1.200+</h3>
+        <p>Produtos Ativos</p>
+    </div>
+    <div class="stat-item">
+        <h3>500+</h3>
+        <p>Vendedores</p>
+    </div>
+    <div class="stat-item">
+        <h3>10.000+</h3>
+        <p>Clientes Satisfeitos</p>
+    </div>
+</section>
+
+<!-- CTA Section -->
+{% if not user.is_authenticated %}
+<section class="cta-section">
+    <h2>Pronto para começar?</h2>
+    <p>Junte-se à comunidade Solar Store hoje mesmo!</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{% url 'seller_register' %}" class="btn btn-white">
+            Cadastro de Vendedor
+        </a>
+        <a href="{% url 'customer_register' %}" class="btn btn-primary">
+            Cadastro de Cliente
+        </a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

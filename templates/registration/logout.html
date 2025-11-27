@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+
+{% block title %}Confirmação de Logout - Solar Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-container {
+        max-width: 400px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+
+    .logout-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .logout-card h1 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .logout-card p {
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .logout-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .logout-actions form {
+        margin: 0;
+    }
+
+    .logout-actions .btn {
+        margin: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logout-container">
+    <div class="logout-card">
+        <h1>Desconectar?</h1>
+        <p>Tem certeza que deseja sair da sua conta?</p>
+
+        <div class="logout-actions">
+            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-block">
+                    Sim, Desconectar
+                </button>
+            </form>
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

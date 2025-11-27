@@ -1,0 +1,195 @@
+{% extends "base/base.html" %}
+
+{% block title %}{{ product.name }} - Solar Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-detail-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin: 2rem 0;
+    }
+
+    .product-image-container {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-image-large {
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6rem;
+    }
+
+    .product-details {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-details h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .product-seller {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .product-price-large {
+        font-size: 2rem;
+        color: #667eea;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .product-rating {
+        color: #ffc107;
+        margin-bottom: 1rem;
+    }
+
+    .product-description-full {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .product-specs {
+        margin-bottom: 2rem;
+    }
+
+    .product-specs h3 {
+        color: #333;
+        margin-bottom: 1rem;
+    }
+
+    .spec-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .quantity-selector input {
+        width: 80px;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .product-detail-container {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'product_list' %}" style="color: #667eea; text-decoration: none;">← Voltar para Produtos</a>
+
+<div class="product-detail-container">
+    <div class="product-image-container">
+        <div class="product-image-large">☀️</div>
+    </div>
+
+    <div class="product-details">
+        <h1>{{ product.name }}</h1>
+        <div class="product-seller">
+            <strong>Vendedor:</strong> {{ product.seller.company_name }}
+        </div>
+        <div class="product-rating">
+            ★★★★★ (0 avaliações)
+        </div>
+
+        <div class="product-price-large">
+            R$ {{ product.price|floatformat:2 }}
+        </div>
+
+        {% if product.quantity > 0 %}
+            <div style="color: #28a745; margin-bottom: 1rem;">
+                ✅ {{ product.quantity }} em estoque
+            </div>
+        {% else %}
+            <div style="color: #d9534f; margin-bottom: 1rem;">
+                ❌ Produto fora de estoque
+            </div>
+        {% endif %}
+
+        {% if product.description %}
+            <div class="product-description-full">
+                {{ product.description }}
+            </div>
+        {% endif %}
+
+        <div class="product-specs">
+            <h3>Informações</h3>
+            <div class="spec-item">
+                <span>SKU:</span>
+                <span>{{ product.slug }}</span>
+            </div>
+            <div class="spec-item">
+                <span>Categoria:</span>
+                <span>Energia Solar</span>
+            </div>
+            <div class="spec-item">
+                <span>Data de Adição:</span>
+                <span>{{ product.created_at|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+
+        {% if product.quantity > 0 %}
+            <div class="quantity-selector">
+                <label for="quantity">Quantidade:</label>
+                <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}">
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary">
+                    🛒 Adicionar ao Carrinho
+                </button>
+                <button class="btn btn-secondary">
+                    ♡ Adicionar à Lista
+                </button>
+            </div>
+        {% else %}
+            <button class="btn btn-secondary btn-block" disabled>
+                Produto Indisponível
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

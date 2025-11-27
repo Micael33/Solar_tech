@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+
+{% block title %}Meus Pedidos - Solar Store{% endblock %}
+
+{% block content %}
+<h2>Meus Pedidos</h2>
+{% if orders %}
+    <ul class="list-group">
+    {% for order in orders %}
+        <li class="list-group-item">
+            <strong>Pedido #{{ order.id }}</strong> — Total: R$ {{ order.total|floatformat:2 }} — {{ order.created_at|date:"d/m/Y H:i" }}
+            <ul>
+            {% for item in order.items.all %}
+                <li>{{ item.quantity }}x {{ item.product.name if item.product else "(produto removido)" }} — R$ {{ item.price|floatformat:2 }}</li>
+            {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Você ainda não tem pedidos.</p>
+{% endif %}
+{% endblock %}

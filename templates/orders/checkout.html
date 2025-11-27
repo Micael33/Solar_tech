@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+
+{% block title %}Checkout - Solar Store{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Checkout</h2>
+    <p>Revise seu pedido e confirme o pagamento (simulado)</p>
+    <ul>
+    {% for it in items %}
+        <li>{{ it.quantity }}x {{ it.product.name }} — R$ {{ it.subtotal|floatformat:2 }}</li>
+    {% endfor %}
+    </ul>
+
+    <p><strong>Total: R$ {{ total|floatformat:2 }}</strong></p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Pagar (Simular)</button>
+        <a href="{% url 'cart_detail' %}" class="btn btn-secondary">Voltar ao Carrinho</a>
+    </form>
+</div>
+{% endblock %}
