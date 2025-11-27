@@ -3,16 +3,8 @@
 {% block title %}Dashboard Cliente - Solar Store{% endblock %}
 
 {% block extra_css %}
-<style>
-    .dashboard-header {
-        margin-bottom: 2rem;
-    }
-
-    .dashboard-header h1 {
-        font-size: 2rem;
-        color: #667eea;
-        margin-bottom: 0.5rem;
-    }
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">"
 
     .dashboard-grid {
         display: grid;
@@ -90,7 +82,6 @@
         font-size: 0.95rem;
         text-align: center;
     }
-</style>
 {% endblock %}
 
 {% block content %}
