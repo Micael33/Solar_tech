@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'orders',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# Stripe Payment Configuration
+from dotenv import load_dotenv
+import os as os_module
+
+load_dotenv()
+
+STRIPE_PUBLIC_KEY = os_module.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os_module.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os_module.getenv('STRIPE_WEBHOOK_SECRET', '')
+
+# Site URL for payment redirects
+SITE_URL = os_module.getenv('SITE_URL', 'http://127.0.0.1:8000')

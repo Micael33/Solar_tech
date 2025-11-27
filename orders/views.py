@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from cart.views import _get_cart, _save_cart
+from django.conf import settings
+from cart.views import _get_cart
 from .models import Order, OrderItem
 from accounts.models import CustomerProfile
 from products.models import Product
-from django.db import transaction
 
 
 @login_required
 def checkout(request):
+	"""Exibir página de checkout com opções de pagamento"""
 	# only customers can checkout
 	customer_profile = getattr(request.user, 'customer_profile', None)
 	if not customer_profile:
@@ -23,7 +24,6 @@ def checkout(request):
 
 	items = []
 	total = 0
-	products_to_update = []
 	for pid, qty in cart.items():
 		try:
 			product = Product.objects.get(id=pid)
@@ -36,42 +36,34 @@ def checkout(request):
 		if product.quantity is not None and qty > product.quantity:
 			messages.error(request, f'Estoque insuficiente para {product.name}.')
 			return redirect('cart_detail')
-		products_to_update.append((product, qty))
 
-	if request.method == 'POST':
-		# Process payment simulation and create order atomically
-		try:
-			with transaction.atomic():
-				order = Order.objects.create(customer=customer_profile, total=total, paid=True)
-				for it in items:
-					OrderItem.objects.create(order=order, product=it['product'], quantity=it['quantity'], price=it['product'].price)
-				# decrement stock
-				for product, qty in products_to_update:
-					if product.quantity is not None:
-						product.quantity = max(0, product.quantity - qty)
-						product.save()
-				# clear cart
-				_save_cart(request, {})
-				messages.success(request, 'Pedido realizado com sucesso!')
-				return redirect('orders:order_success', order_id=order.id)
-		except Exception:
-			messages.error(request, 'Ocorreu um erro ao processar seu pedido.')
-			return redirect('cart_detail')
-
-	return render(request, 'orders/checkout.html', {'items': items, 'total': total})
+	context = {
+		'items': items,
+		'total': total,
+		'stripe_public_key': settings.STRIPE_PUBLIC_KEY,
+	}
+	return render(request, 'orders/checkout.html', context)
 
 
 @login_required
 def order_success(request, order_id):
+	"""Página de sucesso após pagamento confirmado (gerenciada pelo payments app)"""
 	order = Order.objects.filter(id=order_id, customer__user=request.user).first()
 	if not order:
 		messages.error(request, 'Pedido não encontrado.')
 		return redirect('home')
-	return render(request, 'orders/order_success.html', {'order': order})
+	
+	payment = getattr(order, 'payment', None)
+	context = {
+		'order': order,
+		'payment': payment,
+	}
+	return render(request, 'orders/order_success.html', context)
 
 
 @login_required
 def order_list(request):
+	"""Listar pedidos do cliente"""
 	# only customers can view their orders
 	customer_profile = getattr(request.user, 'customer_profile', None)
 	if not customer_profile:

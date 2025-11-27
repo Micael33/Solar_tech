@@ -28,6 +28,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),  # login, logout, password reset
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
+    path('payments/', include('payments.urls')),
     path('', include('products.urls')),
 ]
 

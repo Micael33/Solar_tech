@@ -2,22 +2,387 @@
 
 {% block title %}Checkout - Solar Store{% endblock %}
 
+{% block extra_css %}
+<style>
+    .checkout-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .checkout-header {
+        margin-bottom: 2rem;
+    }
+
+    .checkout-header h1 {
+        color: #667eea;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .checkout-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .checkout-order-summary {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkout-order-summary h2 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .order-total {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #667eea;
+        text-align: right;
+    }
+
+    .checkout-form {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkout-form h2 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .payment-methods {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .payment-method {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .payment-method input[type="radio"] {
+        display: none;
+    }
+
+    .payment-method input[type="radio"]:checked + label {
+        color: #667eea;
+    }
+
+    .payment-method:has(input[type="radio"]:checked) {
+        border-color: #667eea;
+        background: #f5f7ff;
+    }
+
+    .stripe-element {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: white;
+    }
+
+    .payment-button {
+        width: 100%;
+        padding: 1rem;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 1rem;
+    }
+
+    .payment-button:hover {
+        background: #5568d3;
+    }
+
+    .payment-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .security-badge {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-content {
+            grid-template-columns: 1fr;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <h2>Checkout</h2>
-    <p>Revise seu pedido e confirme o pagamento (simulado)</p>
-    <ul>
-    {% for it in items %}
-        <li>{{ it.quantity }}x {{ it.product.name }} — R$ {{ it.subtotal|floatformat:2 }}</li>
-    {% endfor %}
-    </ul>
+<div class="checkout-container">
+    <div class="checkout-header">
+        <h1>💳 Finalizar Compra</h1>
+        <p>Revise seus dados e escolha a forma de pagamento</p>
+    </div>
 
-    <p><strong>Total: R$ {{ total|floatformat:2 }}</strong></p>
+    <div class="checkout-content">
+        <!-- Resumo do Pedido -->
+        <div class="checkout-order-summary">
+            <h2>Resumo do Pedido</h2>
+            {% for item in items %}
+                <div class="order-item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong><br>
+                        <small>Quantidade: {{ item.quantity }}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        R$ {{ item.subtotal|floatformat:2 }}
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="order-total">
+                Total: R$ {{ total|floatformat:2 }}
+            </div>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Pagar (Simular)</button>
-        <a href="{% url 'cart_detail' %}" class="btn btn-secondary">Voltar ao Carrinho</a>
-    </form>
+        <!-- Formulário de Pagamento -->
+        <div class="checkout-form">
+            <h2>Dados de Pagamento</h2>
+            <form id="payment-form" method="post" action="">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="customer-name">Nome Completo</label>
+                    <input 
+                        type="text" 
+                        id="customer-name" 
+                        name="customer_name" 
+                        value="{{ request.user.get_full_name|default:request.user.username }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="customer-email">Email</label>
+                    <input 
+                        type="email" 
+                        id="customer-email" 
+                        name="customer_email" 
+                        value="{{ request.user.email }}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>Forma de Pagamento</label>
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input 
+                                type="radio" 
+                                id="card-payment" 
+                                name="payment_method" 
+                                value="card"
+                                checked
+                            >
+                            <label for="card-payment">💳 Cartão de Crédito</label>
+                        </div>
+                        <div class="payment-method">
+                            <input 
+                                type="radio" 
+                                id="pix-payment" 
+                                name="payment_method" 
+                                value="pix"
+                                disabled
+                                title="Pix disponível em breve"
+                            >
+                            <label for="pix-payment">📱 Pix (Em breve)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="card-element" class="stripe-element" style="display: none;"></div>
+
+                <div id="card-errors" role="alert" style="color: #d9534f; margin-bottom: 1rem; display: none;"></div>
+
+                <button 
+                    type="submit" 
+                    id="payment-button" 
+                    class="payment-button"
+                    disabled
+                >
+                    💳 Processar Pagamento - R$ {{ total|floatformat:2 }}
+                </button>
+
+                <div class="security-badge">
+                    🔒 Seus dados de pagamento são processados de forma segura pelo Stripe
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<!-- Scripts do Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                fontFamily: 'Arial, sans-serif'
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        }
+    });
+
+    const form = document.getElementById('payment-form');
+    const cardMethodRadio = document.getElementById('card-payment');
+    const cardElementDiv = document.getElementById('card-element');
+    const paymentButton = document.getElementById('payment-button');
+    const cardErrors = document.getElementById('card-errors');
+
+    // Mostrar/ocultar card element quando mudar de método de pagamento
+    cardMethodRadio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            cardElementDiv.style.display = 'block';
+            if (!cardElement.mount.prototype) {
+                cardElement.mount('#card-element');
+            }
+            paymentButton.disabled = false;
+        }
+    });
+
+    // Montar Stripe Card Element inicialmente
+    cardElement.mount('#card-element');
+    cardElementDiv.style.display = 'block';
+    paymentButton.disabled = false;
+
+    // Escutar mudanças no card element
+    cardElement.addEventListener('change', (event) => {
+        if (event.error) {
+            cardErrors.textContent = event.error.message;
+            cardErrors.style.display = 'block';
+            paymentButton.disabled = true;
+        } else {
+            cardErrors.textContent = '';
+            cardErrors.style.display = 'none';
+            paymentButton.disabled = false;
+        }
+    });
+
+    // Processar pagamento ao submeter o formulário
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (document.getElementById('card-payment').checked) {
+            paymentButton.disabled = true;
+            paymentButton.textContent = '⏳ Processando...';
+
+            try {
+                // Chamar a view para criar a sessão do Stripe
+                const response = await fetch('{% url "payments:create_session" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                    body: JSON.stringify({
+                        customer_name: document.getElementById('customer-name').value,
+                        customer_email: document.getElementById('customer-email').value,
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    cardErrors.textContent = data.error;
+                    cardErrors.style.display = 'block';
+                    paymentButton.disabled = false;
+                    paymentButton.textContent = '💳 Processar Pagamento - R$ {{ total|floatformat:2 }}';
+                    return;
+                }
+
+                if (data.redirectUrl) {
+                    // Redirecionar para Stripe Checkout
+                    window.location.href = data.redirectUrl;
+                }
+            } catch (error) {
+                cardErrors.textContent = 'Erro ao processar pagamento: ' + error.message;
+                cardErrors.style.display = 'block';
+                paymentButton.disabled = false;
+                paymentButton.textContent = '💳 Processar Pagamento - R$ {{ total|floatformat:2 }}';
+            }
+        }
+    });
+</script>
 {% endblock %}
