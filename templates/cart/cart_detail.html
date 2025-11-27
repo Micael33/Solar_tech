@@ -37,7 +37,7 @@
             </div>
             <div>
                 <strong>Total: R$ {{ total|floatformat:2 }}</strong>
-                <a href="{% url 'checkout' %}" class="btn btn-primary" style="margin-left:1rem;">Finalizar Compra</a>
+                <a href="{% url 'orders:checkout' %}" class="btn btn-primary" style="margin-left:1rem;">Finalizar Compra</a>
             </div>
         </div>
     </form>

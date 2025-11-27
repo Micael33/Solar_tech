@@ -26,9 +26,9 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/logout/', views.logout_view, name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),  # login, logout, password reset
-    path('', include('products.urls')),
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
+    path('', include('products.urls')),
 ]
 
 if settings.DEBUG:
