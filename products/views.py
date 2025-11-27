@@ -13,7 +13,9 @@ def product_list(request):
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
-    return render(request, 'products/product_detail.html', {'product': product})
+    # Verificar se o usuário atual é vendedor
+    is_seller = hasattr(request.user, 'seller_profile') and request.user.is_authenticated
+    return render(request, 'products/product_detail.html', {'product': product, 'is_seller': is_seller})
 
 @login_required
 def product_create(request):

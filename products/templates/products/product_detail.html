@@ -180,19 +180,26 @@
         </div>
 
         {% if product.quantity > 0 %}
-            <div class="quantity-selector">
-                <label for="quantity">Quantidade:</label>
-                <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}">
-            </div>
+            {% if not is_seller %}
+                <div class="quantity-selector">
+                    <label for="quantity">Quantidade:</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.quantity }}">
+                </div>
 
-            <div class="action-buttons">
-                <button class="btn btn-primary">
-                    🛒 Adicionar ao Carrinho
-                </button>
-                <button class="btn btn-secondary">
-                    ♡ Adicionar à Lista
-                </button>
-            </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">
+                        🛒 Adicionar ao Carrinho
+                    </button>
+                    <button class="btn btn-secondary">
+                        ♡ Adicionar à Lista
+                    </button>
+                </div>
+            {% else %}
+                <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; text-align: center; color: #1976d2;">
+                    <p>📊 Você está visualizando este produto como <strong>Vendedor</strong>.</p>
+                    <p style="margin-bottom: 0;">Clientes podem adicionar este produto ao carrinho.</p>
+                </div>
+            {% endif %}
         {% else %}
             <button class="btn btn-secondary btn-block" disabled>
                 Produto Indisponível
