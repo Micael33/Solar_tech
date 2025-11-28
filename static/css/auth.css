@@ -22,7 +22,7 @@
 
 .login-header h1 {
     font-size: 1.8rem;
-    color: #667eea;
+    color: #f7b733;
     margin-bottom: 0.5rem;
 }
 
@@ -79,9 +79,10 @@
 }
 
 .links a {
-    color: #667eea;
+    color: #f7b733;
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .links a:hover {
@@ -108,7 +109,7 @@
 
 .register-header h1 {
     font-size: 1.8rem;
-    color: #667eea;
+    color: #f7b733;
     margin-bottom: 0.5rem;
 }
 
@@ -137,7 +138,7 @@
 
 .password-reset-header h1 {
     font-size: 1.5rem;
-    color: #667eea;
+    color: #f7b733;
     margin-bottom: 0.5rem;
 }
 

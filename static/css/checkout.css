@@ -12,7 +12,7 @@
 }
 
 .checkout-header h1 {
-    color: #667eea;
+    color: #003f7f;
     font-size: 2rem;
     margin-bottom: 0.5rem;
 }
@@ -35,7 +35,7 @@
 }
 
 .checkout-order-summary h2 {
-    color: #667eea;
+    color: #003f7f;
     margin-bottom: 1rem;
 }
 
@@ -62,17 +62,17 @@
 }
 
 .order-item-price {
-    color: #667eea;
+    color: #fc4a1a;
     font-weight: 600;
 }
 
 .order-total {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #667eea;
+    color: #fc4a1a;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 2px solid #667eea;
+    border-top: 2px solid rgba(252,74,26,0.12);
     text-align: right;
 }
 
@@ -123,8 +123,8 @@
 .checkout-form input:focus,
 .checkout-form select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #f7b733;
+    box-shadow: 0 0 0 6px rgba(247,183,51,0.08);
 }
 
 /* Form Row for inline fields */
@@ -147,8 +147,8 @@
 }
 
 .StripeElement--focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #f7b733;
+    box-shadow: 0 0 0 3px rgba(247,183,51,0.12);
 }
 
 .StripeElement--invalid {
@@ -173,8 +173,8 @@
 }
 
 .payment-method-option:hover {
-    border-color: #667eea;
-    background-color: #f9f9f9;
+    border-color: rgba(0,63,127,0.12);
+    background-color: var(--solar-light);
 }
 
 .payment-method-option input[type="radio"] {
@@ -182,8 +182,8 @@
 }
 
 .payment-method-option.active {
-    border-color: #667eea;
-    background-color: #f0f0ff;
+    border-color: rgba(25,118,210,0.18);
+    background-color: rgba(25,118,210,0.04);
 }
 
 /* Checkout Actions */

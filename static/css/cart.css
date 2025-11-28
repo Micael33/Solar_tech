@@ -12,7 +12,7 @@
 }
 
 .cart-header h1 {
-    color: #667eea;
+    color: #003f7f;
     font-size: 2rem;
     margin-bottom: 0.5rem;
 }
@@ -28,7 +28,7 @@
 }
 
 .cart-table th {
-    background: #667eea;
+    background: linear-gradient(135deg, #003f7f 0%, #1976d2 100%);
     color: white;
     padding: 1rem;
     text-align: left;
@@ -87,7 +87,7 @@
     border-bottom: none;
     font-weight: bold;
     font-size: 1.2rem;
-    color: #667eea;
+    color: #fc4a1a;
 }
 
 /* Empty Cart State */
@@ -106,7 +106,7 @@
 
 /* Remove Button */
 .btn-remove {
-    background: #d9534f;
+    background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -114,11 +114,12 @@
     cursor: pointer;
     text-decoration: none;
     font-size: 0.9rem;
-    transition: background 0.3s;
+    transition: transform 0.18s, box-shadow 0.18s;
 }
 
 .btn-remove:hover {
-    background: #c9302c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(252,74,26,0.12);
 }
 
 /* ========================================

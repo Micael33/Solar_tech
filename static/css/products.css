@@ -10,7 +10,7 @@
 
 .products-header h1 {
     font-size: 2rem;
-    color: #667eea;
+    color: #003f7f;
     margin-bottom: 1rem;
 }
 
@@ -60,7 +60,7 @@
 .product-image {
     width: 100%;
     height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,7 +90,7 @@
 
 .product-price {
     font-size: 1.5rem;
-    color: #667eea;
+    color: #fc4a1a;
     font-weight: bold;
     margin-bottom: 1rem;
 }
@@ -150,7 +150,7 @@
 .product-detail-image {
     width: 100%;
     height: 400px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -180,7 +180,7 @@
 
 .product-detail-price {
     font-size: 2rem;
-    color: #667eea;
+    color: #fc4a1a;
     font-weight: bold;
     margin-bottom: 1rem;
 }
@@ -223,7 +223,7 @@
 }
 
 .back-link {
-    color: #667eea;
+    color: #f7b733;
     text-decoration: none;
     margin-bottom: 2rem;
     display: inline-block;
