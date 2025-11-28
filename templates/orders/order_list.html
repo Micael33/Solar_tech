@@ -2,22 +2,62 @@
 
 {% block title %}Meus Pedidos - Solar Store{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Meus Pedidos</h2>
-{% if orders %}
-    <ul class="list-group">
-    {% for order in orders %}
-        <li class="list-group-item">
-            <strong>Pedido #{{ order.id }}</strong> — Total: R$ {{ order.total|floatformat:2 }} — {{ order.created_at|date:"d/m/Y H:i" }}
-            <ul>
-            {% for item in order.items.all %}
-                <li>{{ item.quantity }}x {{ item.product.name if item.product else "(produto removido)" }} — R$ {{ item.price|floatformat:2 }}</li>
-            {% endfor %}
-            </ul>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>Você ainda não tem pedidos.</p>
-{% endif %}
+<div class="orders-container">
+    <div class="orders-header">
+        <h1>📦 Meus Pedidos</h1>
+        <p>Histórico de compras e status dos seus pedidos</p>
+    </div>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Pedido #{{ order.id }}</div>
+                        <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                    </div>
+                    <div class="order-total">R$ {{ order.total|floatformat:2 }}</div>
+                </div>
+
+                <ul class="order-items">
+                    {% for item in order.items.all %}
+                        <li class="order-item">
+                            <span class="item-name">
+                                {% if item.product %}
+                                    <strong>{{ item.product.name }}</strong> ({{ item.quantity }}x)
+                                {% else %}
+                                    <strong>(Produto removido)</strong> ({{ item.quantity }}x)
+                                {% endif %}
+                            </span>
+                            <span class="item-price">R$ {{ item.price|floatformat:2 }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0; text-align: right;">
+                    <strong>Status:</strong> 
+                    {% if order.paid %}
+                        <span style="color: #28a745; font-weight: bold;">✅ Pagamento Confirmado</span>
+                    {% else %}
+                        <span style="color: #ffc107; font-weight: bold;">⏳ Aguardando Pagamento</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>Você ainda não tem pedidos.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-primary" style="margin-top: 1rem;">
+                Explorar Produtos
+            </a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
