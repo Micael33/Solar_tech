@@ -34,3 +34,23 @@ def product_create(request):
         form = ProductForm()
 
     return render(request, 'products/product_form.html', {'form': form})
+
+
+@login_required
+def product_edit(request, slug):
+    """Editar produto (apenas o vendedor proprietário pode editar)"""
+    product = get_object_or_404(Product, slug=slug)
+    
+    # Verificar se o usuário é o vendedor proprietário
+    if not hasattr(request.user, 'seller_profile') or product.seller != request.user.seller_profile:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_detail', slug=product.slug)
+    else:
+        form = ProductForm(instance=product)
+    
+    return render(request, 'products/product_form.html', {'form': form, 'product': product, 'is_edit': True})
