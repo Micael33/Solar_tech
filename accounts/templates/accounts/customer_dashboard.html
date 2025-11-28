@@ -8,54 +8,88 @@
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-header">
-    <h1>Dashboard Cliente</h1>
-    <p>Bem-vindo, {{ user.get_full_name|default:user.username }}!</p>
-</div>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>👋 Dashboard Cliente</h1>
+        <p>Bem-vindo, {{ user.get_full_name|default:user.username }}! Aqui você gerencia seus pedidos e conta.</p>
+    </div>
 
-<div class="dashboard-grid">
-    <div class="stat-card">
-        <div class="stat-label">Pedidos</div>
-        <div class="stat-value">0</div>
+    <!-- Stats Cards -->
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-label">Pedidos Realizados</div>
+            <div class="stat-value">0</div>
+            <div class="stat-meta">No histórico</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Total Gasto</div>
+            <div class="stat-value">R$ 0,00</div>
+            <div class="stat-meta">Até o momento</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-label">Itens no Carrinho</div>
+            <div class="stat-value">0</div>
+            <div class="stat-meta">Prontos para compra</div>
+        </div>
     </div>
-    <div class="stat-card">
-        <div class="stat-label">Total Gasto</div>
-        <div class="stat-value">R$ 0,00</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-label">Itens no Carrinho</div>
-        <div class="stat-value">0</div>
-    </div>
-</div>
 
-<div class="section">
-    <h2>Ações Rápidas</h2>
-    <div class="quick-actions">
-        <a href="{% url 'product_list' %}" class="action-btn">
-            <div class="icon">🛒</div>
-            <div class="label">Explorar Produtos</div>
-        </a>
-        <a href="{% url 'cart_detail' %}" class="action-btn">
-            <div class="icon">🛍️</div>
-            <div class="label">Meu Carrinho</div>
-        </a>
-        <a href="{% url 'orders:order_list' %}" class="action-btn">
-            <div class="icon">📦</div>
-            <div class="label">Meus Pedidos</div>
-        </a>
+    <!-- Quick Actions -->
+    <div class="section">
+        <h2>Ações Rápidas</h2>
+        <div class="quick-actions">
+            <a href="{% url 'product_list' %}" class="action-btn">
+                <div class="icon">🛍️</div>
+                <div class="label">Explorar Produtos</div>
+            </a>
+            <a href="{% url 'cart_detail' %}" class="action-btn">
+                <div class="icon">🛒</div>
+                <div class="label">Meu Carrinho</div>
+            </a>
+            <a href="{% url 'orders:order_list' %}" class="action-btn">
+                <div class="icon">📦</div>
+                <div class="label">Meus Pedidos</div>
+            </a>
+        </div>
     </div>
-</div>
 
-<div class="section">
-    <h2>Dados da Conta</h2>
-    <p><strong>Nome:</strong> {{ user.get_full_name|default:user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>CPF:</strong> {{ user.customer_profile.cpf }}</p>
-    {% if user.customer_profile.phone %}
-        <p><strong>Telefone:</strong> {{ user.customer_profile.phone }}</p>
-    {% endif %}
-    {% if user.customer_profile.address %}
-        <p><strong>Endereço:</strong> {{ user.customer_profile.address }}</p>
-    {% endif %}
+    <!-- Account Data -->
+    <div class="section">
+        <h2>Meus Dados</h2>
+        <div class="account-data">
+            <div class="account-data-item">
+                <strong>👤 Nome</strong>
+                <p>{{ user.get_full_name|default:user.username }}</p>
+            </div>
+            <div class="account-data-item">
+                <strong>✉️ Email</strong>
+                <p>{{ user.email }}</p>
+            </div>
+            <div class="account-data-item">
+                <strong>🆔 CPF</strong>
+                <p>{{ user.customer_profile.cpf }}</p>
+            </div>
+            {% if user.customer_profile.phone %}
+            <div class="account-data-item">
+                <strong>📱 Telefone</strong>
+                <p>{{ user.customer_profile.phone }}</p>
+            </div>
+            {% endif %}
+            {% if user.customer_profile.address %}
+            <div class="account-data-item">
+                <strong>📍 Endereço</strong>
+                <p>{{ user.customer_profile.address }}</p>
+            </div>
+            {% endif %}
+            {% if not user.customer_profile.phone and not user.customer_profile.address %}
+            <div class="account-data-item">
+                <strong>⚠️ Dados Incompletos</strong>
+                <p>Complete seu perfil para uma melhor experiência</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
