@@ -75,6 +75,8 @@ body {
     color: white;
     text-decoration: none;
     transition: opacity 0.3s;
+    font-size: 1.4rem;   /* AUMENTA O TAMANHO */
+    font-weight: 600; 
 }
 
 .navbar-nav a:hover {
