@@ -20,7 +20,14 @@ def add_to_cart(request, slug):
 	pid = str(product.id)
 	cart[pid] = cart.get(pid, 0) + qty
 	_save_cart(request, cart)
-	messages.success(request, f'✅ Produto "{product.name}" adicionado ao carrinho ({qty}x).')
+	# Prefixar mensagem com o nome do cliente, se disponível
+	if hasattr(request, 'user') and getattr(request.user, 'is_authenticated', False):
+		customer_name = request.user.get_full_name() or request.user.username
+		prefix = f"{customer_name}, "
+	else:
+		prefix = ""
+
+	messages.success(request, f'{prefix}o produto "{product.name}" foi adicionado no carrinho ({qty}x).')
 	# Redirecionar para a página de detalhes ou carrinho conforme POST 'next'
 	next_page = request.POST.get('next')
 	if next_page:
