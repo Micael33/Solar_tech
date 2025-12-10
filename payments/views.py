@@ -16,12 +16,14 @@ from accounts.models import CustomerProfile
 from products.models import Product
 from cart.views import _get_cart, _save_cart
 from .models import Payment, PaymentLog
+from .email_utils import send_payment_confirmation_email
 
 # Configurar chave do Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 @login_required
+@require_POST
 def create_payment_session(request):
     """Criar uma sessão de pagamento do Stripe Checkout"""
     try:
@@ -93,19 +95,29 @@ def create_payment_session(request):
                     'quantity': item['quantity'],
                 })
 
-            # Criar sessão de checkout no Stripe
-            session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=line_items,
-                mode='payment',
-                customer_email=request.user.email,
-                success_url=settings.SITE_URL + f'/payments/success/{order.id}/',
-                cancel_url=settings.SITE_URL + f'/payments/cancel/{order.id}/',
-                metadata={
-                    'order_id': order.id,
-                    'user_id': request.user.id,
-                }
-            )
+            try:
+                # Criar sessão de checkout no Stripe
+                session = stripe.checkout.Session.create(
+                    payment_method_types=['card'],
+                    line_items=line_items,
+                    mode='payment',
+                    customer_email=request.user.email,
+                    success_url=settings.SITE_URL + f'/payments/success/{order.id}/',
+                    cancel_url=settings.SITE_URL + f'/payments/cancel/{order.id}/',
+                    metadata={
+                        'order_id': order.id,
+                        'user_id': request.user.id,
+                    }
+                )
+            except stripe.error.StripeError as e:
+                # Log do erro para auditoria
+                PaymentLog.objects.create(
+                    payment=None,
+                    event_type='stripe_error_session_create',
+                    details={'error': str(e), 'order_id': order.id}
+                )
+                # Deixar a exceção propagar para fazer rollback da transação
+                raise
 
             # Salvar informações de pagamento
             payment = Payment.objects.create(
@@ -132,10 +144,10 @@ def create_payment_session(request):
             # Limpar carrinho
             _save_cart(request, {})
 
-            return JsonResponse({
-                'sessionId': session.id,
-                'redirectUrl': session.url,
-            })
+        return JsonResponse({
+            'sessionId': session.id,
+            'redirectUrl': session.url,
+        })
 
     except stripe.error.StripeError as e:
         return JsonResponse({'error': f'Erro do Stripe: {str(e)}'}, status=400)
@@ -182,6 +194,9 @@ def payment_success(request, order_id):
                         if item.product and item.product.quantity is not None:
                             item.product.quantity = max(0, item.product.quantity - item.quantity)
                             item.product.save()
+                
+                # Enviar email de confirmação de pagamento
+                send_payment_confirmation_email(order, payment)
         except stripe.error.StripeError as e:
             messages.warning(request, 'Não foi possível verificar o status do pagamento. Entre em contato com o suporte.')
     
@@ -222,11 +237,18 @@ def stripe_webhook(request):
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
 
     try:
-        event = stripe.Webhook.construct_event(
-            payload,
-            sig_header,
-            settings.STRIPE_WEBHOOK_SECRET
-        )
+        # Se não houver webhook secret configurado (dev), tente desserializar o payload
+        if not settings.STRIPE_WEBHOOK_SECRET:
+            try:
+                event = json.loads(payload)
+            except Exception:
+                return JsonResponse({'error': 'Payload inválido'}, status=400)
+        else:
+            event = stripe.Webhook.construct_event(
+                payload,
+                sig_header,
+                settings.STRIPE_WEBHOOK_SECRET
+            )
     except ValueError as e:
         return JsonResponse({'error': 'Payload inválido'}, status=400)
     except stripe.error.SignatureVerificationError as e:
@@ -278,6 +300,9 @@ def handle_checkout_session_completed(session):
                 if item.product and item.product.quantity is not None:
                     item.product.quantity = max(0, item.product.quantity - item.quantity)
                     item.product.save()
+            
+            # Enviar email de confirmação de pagamento
+            send_payment_confirmation_email(order, payment)
     except Order.DoesNotExist:
         pass
 

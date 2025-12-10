@@ -152,3 +152,19 @@ STRIPE_WEBHOOK_SECRET = os_module.getenv('STRIPE_WEBHOOK_SECRET', '')
 
 # Site URL for payment redirects
 SITE_URL = os_module.getenv('SITE_URL', 'http://127.0.0.1:8000')
+
+# Email Configuration
+if DEBUG:
+    # Em desenvolvimento, usar console backend (exibe emails no console)
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Em produção, configurar com SMTP real
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os_module.getenv('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = int(os_module.getenv('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os_module.getenv('EMAIL_USE_TLS', 'True') == 'True'
+    EMAIL_HOST_USER = os_module.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os_module.getenv('EMAIL_HOST_PASSWORD', '')
+
+# Default email sender
+DEFAULT_FROM_EMAIL = os_module.getenv('DEFAULT_FROM_EMAIL', 'noreply@solarstore.com.br')

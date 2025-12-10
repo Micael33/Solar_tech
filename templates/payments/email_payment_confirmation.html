@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Pagamento - Solar Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .success-badge {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section h2 {
+            font-size: 18px;
+            color: #FFA500;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .order-detail:last-child {
+            border-bottom: none;
+        }
+        .order-detail label {
+            font-weight: bold;
+            color: #666;
+        }
+        .order-detail value {
+            color: #333;
+        }
+        .item {
+            background-color: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #FFA500;
+            border-radius: 4px;
+        }
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .item-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+        .total {
+            background-color: #FFF3E0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .total-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFA500;
+        }
+        .steps {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .steps ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #666;
+        }
+        .steps li {
+            margin-bottom: 10px;
+        }
+        .link {
+            display: inline-block;
+            background-color: #FFA500;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .link:hover {
+            background-color: #FF8C00;
+        }
+        .contact {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+        }
+        .footer a {
+            color: #FFA500;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>☀️ Solar Store</h1>
+            <p>Confirmação de Pagamento</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Olá <strong>{{ customer_name }}</strong>,
+            </div>
+
+            <p>Sua compra foi processada com sucesso! 🎉</p>
+
+            <div class="success-badge">
+                ✅ PAGAMENTO CONFIRMADO
+            </div>
+
+            <!-- Order Details -->
+            <div class="section">
+                <h2>Detalhes do Pedido</h2>
+                <div class="order-detail">
+                    <label>ID do Pedido:</label>
+                    <span>#{{ order.id }}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Data:</label>
+                    <span>{{ order.created_at|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Status:</label>
+                    <span>✅ Pagamento Confirmado</span>
+                </div>
+                {% if payment %}
+                <div class="order-detail">
+                    <label>Forma de Pagamento:</label>
+                    <span>{{ payment.get_payment_method_display }}</span>
+                </div>
+                <div class="order-detail">
+                    <label>Status do Pagamento:</label>
+                    <span>{{ payment.get_status_display }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Items -->
+            <div class="section">
+                <h2>Itens Comprados</h2>
+                {% for item in order.items.all %}
+                <div class="item">
+                    <div class="item-name">{{ item.product.name }}</div>
+                    <div class="item-detail">
+                        <span>Quantidade: {{ item.quantity }}x</span>
+                        <span>R$ {{ item.price|floatformat:2 }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="total">
+                    <span class="total-label">Total da Compra:</span>
+                    <span class="total-value">R$ {{ order.total|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Próximos Passos</h2>
+                <div class="steps">
+                    <ol>
+                        <li>Seu pedido está sendo preparado para envio</li>
+                        <li>Você receberá um email com o número de rastreamento assim que o produto for despachado</li>
+                        <li>Acompanhe seu pedido no link abaixo</li>
+                    </ol>
+                </div>
+                <a href="{{ site_url }}/orders/list/" class="link">
+                    📦 Acompanhar Pedido
+                </a>
+            </div>
+
+            <!-- Contact -->
+            <div class="contact">
+                <strong>Dúvidas? Entre em contato conosco:</strong><br>
+                📧 suporte@solarstore.com.br<br>
+                📞 (11) 3456-7890
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                Solar Store - Energia Solar para Seu Futuro<br>
+                <a href="{{ site_url }}">{{ site_url }}</a><br>
+                © 2025 Todos os direitos reservados.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

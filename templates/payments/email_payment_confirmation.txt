@@ -1,0 +1,41 @@
+Confirmação de Pagamento - Solar Store
+=====================================
+
+Olá {{ customer_name }},
+
+Sua compra foi processada com sucesso! 🎉
+
+Detalhes do Pedido:
+-------------------
+ID do Pedido: #{{ order.id }}
+Data: {{ order.created_at|date:"d/m/Y H:i" }}
+Status: Pagamento Confirmado ✅
+
+Itens Comprados:
+----------------
+{% for item in order.items.all %}
+- {{ item.product.name }}
+  Quantidade: {{ item.quantity }}x
+  Subtotal: R$ {{ item.price|floatformat:2 }}
+{% endfor %}
+
+Resumo Financeiro:
+------------------
+Total da Compra: R$ {{ order.total|floatformat:2 }}
+Status do Pagamento: {{ payment.get_status_display }}
+
+Próximos Passos:
+----------------
+1. Seu pedido está sendo preparado para envio
+2. Você receberá um email com o número de rastreamento assim que o produto for despachado
+3. Acompanhe seu pedido em: {{ site_url }}/orders/list/
+
+Se tiver dúvidas, entre em contato conosco:
+📧 suporte@solarstore.com.br
+📞 (11) 3456-7890
+
+Obrigado por sua compra!
+
+---
+Solar Store - Energia Solar para Seu Futuro
+{{ site_url }}
