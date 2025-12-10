@@ -139,15 +139,16 @@
     cardMethodRadio.addEventListener('change', (e) => {
         if (e.target.checked) {
             cardElementDiv.style.display = 'block';
-            if (!cardElement.mount.prototype) {
-                cardElement.mount('#card-element');
-            }
             paymentButton.disabled = false;
         }
     });
 
-    // Montar Stripe Card Element inicialmente
-    cardElement.mount('#card-element');
+    // Montar Stripe Card Element inicialmente (mount uma vez)
+    let _cardMounted = false;
+    if (!_cardMounted) {
+        cardElement.mount('#card-element');
+        _cardMounted = true;
+    }
     cardElementDiv.style.display = 'block';
     paymentButton.disabled = false;
 
