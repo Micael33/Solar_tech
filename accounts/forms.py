@@ -13,14 +13,24 @@ class SellerRegisterForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2', 'company_name', 'cnpj')
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        # create seller profile
-        SellerProfile.objects.create(
-            user=user,
-            company_name=self.cleaned_data['company_name'],
-            cnpj=self.cleaned_data['cnpj']
-        )
+        from django.db import transaction
+
+        # Garantir que criação de usuário + perfil seja atômica
+        with transaction.atomic():
+            user = super().save(commit=commit)
+            # create seller profile
+            SellerProfile.objects.create(
+                user=user,
+                company_name=self.cleaned_data['company_name'],
+                cnpj=self.cleaned_data['cnpj']
+            )
         return user
+
+    def clean_cnpj(self):
+        cnpj = self.cleaned_data.get('cnpj')
+        if SellerProfile.objects.filter(cnpj=cnpj).exists():
+            raise forms.ValidationError('CNPJ já cadastrado.')
+        return cnpj
 
 
 class CustomerRegisterForm(UserCreationForm):
@@ -31,9 +41,19 @@ class CustomerRegisterForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2', 'cpf')
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        CustomerProfile.objects.create(
-            user=user,
-            cpf=self.cleaned_data['cpf']
-        )
+        from django.db import transaction
+
+        # Garantir que criação de usuário + perfil seja atômica
+        with transaction.atomic():
+            user = super().save(commit=commit)
+            CustomerProfile.objects.create(
+                user=user,
+                cpf=self.cleaned_data['cpf']
+            )
         return user
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+        if CustomerProfile.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError('CPF já cadastrado.')
+        return cpf

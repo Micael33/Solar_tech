@@ -154,12 +154,19 @@ STRIPE_WEBHOOK_SECRET = os_module.getenv('STRIPE_WEBHOOK_SECRET', '')
 SITE_URL = os_module.getenv('SITE_URL', 'http://127.0.0.1:8000')
 
 # Email Configuration
-if DEBUG:
-    # Em desenvolvimento, usar console backend (exibe emails no console)
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    # Em produção, configurar com SMTP real
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Permite sobrescrever o backend de e-mail via variável de ambiente `EMAIL_BACKEND`.
+# Se não for fornecida, usa console em DEBUG e SMTP em produção.
+EMAIL_BACKEND = os_module.getenv('EMAIL_BACKEND')
+if not EMAIL_BACKEND:
+    if DEBUG:
+        # Em desenvolvimento, usar console backend (exibe emails no console)
+        EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    else:
+        # Em produção, padrão para SMTP
+        EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Se o backend configurado for SMTP (ou similar), carregar as configurações
+if 'smtp' in EMAIL_BACKEND.lower():
     EMAIL_HOST = os_module.getenv('EMAIL_HOST', 'smtp.gmail.com')
     EMAIL_PORT = int(os_module.getenv('EMAIL_PORT', 587))
     EMAIL_USE_TLS = os_module.getenv('EMAIL_USE_TLS', 'True') == 'True'
